@@ -12,6 +12,18 @@ const getUsers = (req, res) => {
     });
 };
 
+const getUsersById = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database.query("select * from users where id = ?", [id]).then(([user]) => {
+    if (user.length > 0) {
+      res.status(200).json(user[0]);
+    } else {
+      res.status(404).send("Sorry bro, not found !");
+    }
+  });
+};
+
 const postUsers = (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;
 
@@ -29,20 +41,31 @@ const postUsers = (req, res) => {
     });
 };
 
-const getUsersById = (req, res) => {
+const updateUser = (req, res) => {
   const id = parseInt(req.params.id);
+  const { firstname, lastname, email, city, language } = req.body;
 
-  database.query("select * from users where id = ?", [id]).then(([user]) => {
-    if (user.length > 0) {
-      res.status(200).json(user[0]);
-    } else {
-      res.status(404).send("Sorry bro, not found !");
-    }
-  });
+  database
+    .query(
+      "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
+      [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.sendStatus(404);
+      } else {
+        res.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 };
 
 module.exports = {
   getUsers,
   getUsersById,
   postUsers,
+  updateUser,
 };
