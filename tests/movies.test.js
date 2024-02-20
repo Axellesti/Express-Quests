@@ -157,3 +157,33 @@ describe("PUT /api/movies/:id", () => {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/movies/:id", () => {
+  it("should delete a movie", async () => {
+    const newMovie = {
+      title: "Avatar",
+      director: "James Cameron",
+      year: "2009",
+      color: "1",
+      duration: 162,
+    };
+
+    const response = await request(app).post("/api/movies").send(newMovie);
+    expect(response.body).toHaveProperty("id");
+    const { id } = response.body;
+
+    const deleteResponse = await request(app).delete(`/api/movies/${id}`);
+    expect(deleteResponse.status).toEqual(204);
+
+    const [movies] = await database.query(
+      "SELECT * FROM movies WHERE id=?",
+      id
+    );
+    expect(typeof response.body.id).toBe("number");
+  });
+
+  it("should return 404 if movie does not exist", async () => {
+    const response = await request(app).delete("/api/movies/9999");
+    expect(response.status).toEqual(404);
+  });
+});
