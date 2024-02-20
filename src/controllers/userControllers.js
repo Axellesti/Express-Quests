@@ -8,7 +8,7 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.sendStatuts(500);
+      res.sendStatus(422);
     });
 };
 
@@ -37,7 +37,7 @@ const postUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.sendStatus(500);
+      res.sendStatus(422);
     });
 };
 
@@ -59,7 +59,7 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.sendStatus(500);
+      res.sendStatus(422);
     });
 };
 
